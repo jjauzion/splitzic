@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask
+from flask import render_template, request, redirect, url_for
 from flask import send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -26,6 +27,10 @@ def ping_pong():
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/')
+def home():
+    return render_template('index.html', titre="Bienvenue !")
 
 
 @app.route('/', methods=['GET', 'POST'])
