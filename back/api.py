@@ -1,11 +1,7 @@
 import os
-from flask import Flask
-from flask import render_template, request, redirect, url_for
-from flask import send_from_directory
+from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
-from werkzeug.utils import secure_filename
 from pathlib import Path
-from zipfile import ZipFile
 
 from src import split
 
@@ -14,22 +10,23 @@ ALLOWED_EXTENSIONS = {'mp3'}
 
 app = Flask(__name__, static_folder="static", static_url_path="", template_folder="template")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-# enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
-
-# sanity check route
-@app.route('/ping', methods=['GET'])
-def ping_pong():
-    return jsonify('pong!')
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/')
-def home():
-    return render_template('index.html', titre="Bienvenue !")
 
+# sanity check route
+@app.route('/ping', methods=['GET'])
+def ping_pong():
+    print(request)
+    return jsonify('pong!')
+
+@app.route('/upload', methods=['POST'])c
+def save_file():
+    print(request.get_data())
+    return ()
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
