@@ -51,6 +51,8 @@ export default {
   },
   methods: {
     onFileChange(selectedFile) {
+      console.log(selectedFile);
+      // check https://lobotuerto.com/blog/cropping-images-with-vuejs-and-cropperjs/
       if (selectedFile) {
         this.objectUrl = window.URL.createObjectURL(selectedFile);
         const reader = new FileReader();
@@ -62,11 +64,11 @@ export default {
         };
       } else {
         this.selectedFile = null;
+        this.objectUrl = null;
       }
     },
     playSound() {
       if (this.objectUrl) {
-        console.log(this.objectUrl);
         const audio = new Audio(this.objectUrl);
         audio.play();
       }
