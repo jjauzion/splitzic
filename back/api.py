@@ -38,14 +38,14 @@ def ping_pong():
 @app.route('/upload', methods=['POST'])
 def save_file():
     if request.method == 'POST':
-        if 'file' not in request.form:
+        if 'file' not in request.files:
             return 'No file'
-        file = request.form['file']
-        if 'filename' not in request.form:
+        file = request.files['file']
+        # if user does not select file, browser also submit an empty part without filename
+        if file.filename == '':
             return 'No filename'
-        filename = request.form['filename']
-        if file and allowed_file(filename):
-            filename = secure_filename(filename)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
             file_path = Path(app.config['UPLOAD_FOLDER']) / filename
             file.save(str(file_path))
             # stem = 2
