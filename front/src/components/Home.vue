@@ -25,6 +25,7 @@
     <v-layout>
         <v-file-input
           v-model="selectedFile"
+          id="upload"
           accept="audio/mp3"
           placeholder="mp3 files only"
           prepend-icon="mdi-file-music-outline"
@@ -41,8 +42,11 @@
 </template>
 
 <script>
+
+import api from '@/service/api';
+
 export default {
-  name: 'HelloWorld',
+  name: 'Home',
   data() {
     return {
       selectedFile: null,
@@ -51,17 +55,21 @@ export default {
   },
   methods: {
     onFileChange(selectedFile) {
-      console.log(selectedFile);
       // check https://lobotuerto.com/blog/cropping-images-with-vuejs-and-cropperjs/
       if (selectedFile) {
         this.objectUrl = window.URL.createObjectURL(selectedFile);
+        const filename = selectedFile.name;
         const reader = new FileReader();
-        const vm = this;
-        reader.onload = () => {
-          if (reader.result) {
-            vm.file = reader.result.toString();
-          } else vm.selectedFile = null;
-        };
+        reader.addEventListener('loadend', () => {
+          const formData = new FormData();
+          formData.append('file', reader.result);
+          formData.append('filename', filename);
+          console.log(...formData);
+          api().post('/upload', formData).then((ret) => {
+            console.log(ret);
+          });
+        });
+        reader.readAsDataURL(selectedFile);
       } else {
         this.selectedFile = null;
         this.objectUrl = null;

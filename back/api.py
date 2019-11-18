@@ -1,8 +1,9 @@
 import os
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_from_directory
 from flask_cors import CORS
 from pathlib import Path
-
+from werkzeug.utils import secure_filename
+from zipfile import ZipFile
 from src import split
 
 UPLOAD_FOLDER = 'raw_data'
@@ -16,6 +17,17 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def split_audio(filename, stem):
+    output_dir = Path("output")
+    tmp_dir = Path("tmp")
+    split.split(str(Path(app.config['UPLOAD_FOLDER']) / filename), str(tmp_dir), int(stem))
+    output_file = output_dir / f"{Path(filename).stem}.zip"
+    with ZipFile(output_file, 'w') as zp:
+        for file in tmp_dir.iterdir():
+            zp.write(file)
+    for file in tmp_dir.iterdir():
+        file.unlink()
+    return True
 
 # sanity check route
 @app.route('/ping', methods=['GET'])
@@ -23,17 +35,12 @@ def ping_pong():
     print(request)
     return jsonify('pong!')
 
-@app.route('/upload', methods=['POST'])c
+@app.route('/upload', methods=['POST'])
 def save_file():
-    print(request.get_data())
-    return ()
-
-@app.route('/', methods=['GET', 'POST'])
-def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
-            return 'No file part'
+            return 'No file'
         file = request.files['file']
         # if user does not select file, browser also submit an empty part without filename
         if file.filename == '':
@@ -42,11 +49,11 @@ def upload_file():
             filename = secure_filename(file.filename)
             file_path = Path(app.config['UPLOAD_FOLDER']) / filename
             file.save(str(file_path))
-            stem = request.form['stems']
-            return redirect(url_for('split_audio', filename=filename, stem=stem))
+            # stem = 2
+            # split_audio(filename, 2)
         else:
             return "Wrong file format. Only '.mp3' accepted"
-    return redirect(url_for('home'))
+    return "Upload successfull"
 
 
 @app.route('/split/<filename>/<stem>')
