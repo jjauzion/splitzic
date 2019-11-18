@@ -50,17 +50,17 @@ export default {
   data() {
     return {
       selectedFile: null,
-      objectUrl: null,
+      file: null,
     };
   },
   methods: {
     onFileChange(selectedFile) {
       // check https://lobotuerto.com/blog/cropping-images-with-vuejs-and-cropperjs/
       if (selectedFile) {
-        this.objectUrl = window.URL.createObjectURL(selectedFile);
         const filename = selectedFile.name;
         const reader = new FileReader();
         reader.addEventListener('loadend', () => {
+          this.file = reader.result;
           const formData = new FormData();
           formData.append('file', reader.result);
           formData.append('filename', filename);
@@ -76,8 +76,8 @@ export default {
       }
     },
     playSound() {
-      if (this.objectUrl) {
-        const audio = new Audio(this.objectUrl);
+      if (this.file) {
+        const audio = new Audio(this.file);
         audio.play();
       }
     },
