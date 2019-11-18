@@ -34,10 +34,21 @@
         </v-file-input>
     </v-layout>
     <v-layout>
+     <v-row align="center">
+      <v-col class="d-flex" cols="12" sm="6">
+        <v-select
+          :items="stemList"
+          label="# of stems"
+          v-model="stem"
+        ></v-select>
+      </v-col>
+     </v-row>
+    </v-layout>
+    <v-container>
       <div v-if="selectedFile">
         <v-btn @click="playSound">Play</v-btn>
       </div>
-    </v-layout>
+    </v-container>
   </v-container>
 </template>
 
@@ -50,6 +61,8 @@ export default {
   data() {
     return {
       selectedFile: null,
+      stemList: ['2', '4', '5'],
+      stem: '2',
     };
   },
   methods: {
@@ -57,6 +70,8 @@ export default {
       if (selectedFile) {
         const fileFD = new FormData();
         fileFD.append('file', selectedFile);
+        fileFD.append('stem', this.stem);
+        console.log(...fileFD);
         api().post('/upload', fileFD).then((ret) => {
           console.log(ret);
         });
@@ -66,6 +81,16 @@ export default {
       }
     },
     playSound() {
+      if (this.selectedFile) {
+        const reader = new FileReader();
+        reader.addEventListener('loadend', () => {
+          const audio = new Audio(reader.result);
+          audio.play();
+        });
+        reader.readAsDataURL(this.selectedFile);
+      }
+    },
+    playOutput() {
       if (this.selectedFile) {
         const reader = new FileReader();
         reader.addEventListener('loadend', () => {

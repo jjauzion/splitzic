@@ -21,12 +21,6 @@ def split_audio(filename, stem):
     output_dir = Path("output")
     tmp_dir = Path("tmp")
     split.split(str(Path(app.config['UPLOAD_FOLDER']) / filename), str(tmp_dir), int(stem))
-    output_file = output_dir / f"{Path(filename).stem}.zip"
-    with ZipFile(output_file, 'w') as zp:
-        for file in tmp_dir.iterdir():
-            zp.write(file)
-    for file in tmp_dir.iterdir():
-        file.unlink()
     return True
 
 # sanity check route
@@ -41,15 +35,14 @@ def save_file():
         if 'file' not in request.files:
             return 'No file'
         file = request.files['file']
-        # if user does not select file, browser also submit an empty part without filename
         if file.filename == '':
             return 'No filename'
-        if file and allowed_file(file.filename):
+        if file and allowed_file(file.filename) and request.form['stem']:
             filename = secure_filename(file.filename)
             file_path = Path(app.config['UPLOAD_FOLDER']) / filename
             file.save(str(file_path))
-            # stem = 2
-            # split_audio(filename, 2)
+            stem = int(request.form['stem'])
+            split_audio(filename, stem)
         else:
             return "Wrong file format. Only '.mp3' accepted"
     return "Upload successfull"
