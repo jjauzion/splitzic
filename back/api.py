@@ -4,14 +4,14 @@ from flask_cors import CORS
 from pathlib import Path
 from werkzeug.utils import secure_filename
 from zipfile import ZipFile
-from src import split
+import split
 
 UPLOAD_FOLDER = 'raw_data'
 ALLOWED_EXTENSIONS = {'mp3'}
 
 app = Flask(__name__, static_folder="static", static_url_path="", template_folder="template")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-CORS(app, resources={r'/*': {'origins': '*'}})
+CORS(app)
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -20,7 +20,7 @@ def allowed_file(filename):
 def split_audio(filename, stem):
     output_dir = Path("output")
     tmp_dir = Path("tmp")
-    split.split(str(Path(app.config['UPLOAD_FOLDER']) / filename), str(tmp_dir), int(stem))
+    split.split(str(Path(app.config['UPLOAD_FOLDER']) / filename), str(output_dir), int(stem))
     return True
 
 # sanity check route
@@ -64,4 +64,4 @@ def split_audio(filename, stem):
 if __name__ == '__main__':
     app.config['SESSION_TYPE'] = 'filesystem'
     app.debug = True
-    app.run()
+    app.run(host='0.0.0.0', port=int("5050"))
