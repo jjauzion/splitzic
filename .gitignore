@@ -1,0 +1,3 @@
+# Folders to ignore
+output/
+.DS_Store

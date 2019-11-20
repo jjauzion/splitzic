@@ -32,6 +32,3 @@ WORKDIR /workspace/spleeter
 RUN pip install .
 
 WORKDIR /workspace
-ENTRYPOINT [ "python" ]
-
-CMD [ "api.py" ]
