@@ -1,5 +1,6 @@
+# Folders to ignore
 pretrained_models/
-raw_data/
+raw_data/*.mp3
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

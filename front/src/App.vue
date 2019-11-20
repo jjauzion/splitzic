@@ -22,7 +22,7 @@
 import Home from './components/Home.vue';
 
 export default {
-  name: 'App',
+  name: 'Stemify',
 
   components: {
     Home,

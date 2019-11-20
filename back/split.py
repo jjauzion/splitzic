@@ -13,5 +13,6 @@ def split(input_file, output_dir, stem):
     """
     if stem != 2 and stem != 4 and stem != 5:
         raise AttributeError("Wrong stem value.")
+    print ('Splitting')
     separator = spleeter.Separator(f'spleeter:{stem}stems')
     separator.separate_to_file(input_file, output_dir)
