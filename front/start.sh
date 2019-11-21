@@ -1,2 +1,2 @@
 npm install
-yarn serve
+npm run serve

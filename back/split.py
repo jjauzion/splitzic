@@ -1,6 +1,5 @@
 import spleeter.separator as spleeter
 
-
 def split(input_file, output_dir, stem):
     """
     Split the audio file 'input_file' according to 'stem' and save result in 'output_dir'
@@ -13,6 +12,6 @@ def split(input_file, output_dir, stem):
     """
     if stem != 2 and stem != 4 and stem != 5:
         raise AttributeError("Wrong stem value.")
-    print ('Splitting')
+    print ('Splitting to ', output_dir)
     separator = spleeter.Separator(f'spleeter:{stem}stems')
     separator.separate_to_file(input_file, output_dir)

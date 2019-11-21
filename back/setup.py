@@ -66,6 +66,7 @@ setup(
         'ffmpeg-python',
         'flask',
         'flask-cors',
+        'numpy==1.16.4',
         'importlib_resources ; python_version<"3.7"',
         'norbert==0.2.1',
         'pandas==0.25.1',

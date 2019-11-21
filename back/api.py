@@ -47,20 +47,6 @@ def save_file():
             return "Wrong file format. Only '.mp3' accepted"
     return "Upload successfull"
 
-
-@app.route('/split/<filename>/<stem>')
-def split_audio(filename, stem):
-    output_dir = Path("output")
-    tmp_dir = Path("tmp")
-    split.split(str(Path(app.config['UPLOAD_FOLDER']) / filename), str(tmp_dir), int(stem))
-    output_file = output_dir / f"{Path(filename).stem}.zip"
-    with ZipFile(output_file, 'w') as zp:
-        for file in tmp_dir.iterdir():
-            zp.write(file)
-    for file in tmp_dir.iterdir():
-        file.unlink()
-    return send_from_directory(output_dir, output_file.name, as_attachment=True, attachment_filename=output_file.name)
-
 if __name__ == '__main__':
     app.config['SESSION_TYPE'] = 'filesystem'
     app.debug = False
