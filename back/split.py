@@ -1,4 +1,5 @@
 import spleeter.separator as spleeter
+from datetime import datetime
 
 def split(input_file, output_dir, stem):
     """
@@ -12,6 +13,6 @@ def split(input_file, output_dir, stem):
     """
     if stem != 2 and stem != 4 and stem != 5:
         raise AttributeError("Wrong stem value.")
-    print ('Splitting to ', output_dir)
+    print ('Splitting to "', output_dir,'" starts: ', datetime.now())
     separator = spleeter.Separator(f'spleeter:{stem}stems')
     separator.separate_to_file(input_file, output_dir)

@@ -46,14 +46,15 @@
     </v-layout>
     <v-container>
       <div v-if="selectedFile">
-        <v-btn @click="playSound">Play</v-btn>
+        <v-btn @click="playSound">{{ playButton }}</v-btn>
+        <vuetify-audio :file="selectedFile" :ended="audioFinish"></vuetify-audio>
       </div>
     </v-container>
   </v-container>
 </template>
 
 <script>
-
+import VuetifyAudio from 'vuetify-audio';
 import api from '@/service/api';
 
 export default {
@@ -63,6 +64,7 @@ export default {
       selectedFile: null,
       stemList: ['2', '4', '5'],
       stem: '2',
+      playButton: 'Play Original',
     };
   },
   methods: {
@@ -86,19 +88,13 @@ export default {
         reader.addEventListener('loadend', () => {
           const audio = new Audio(reader.result);
           audio.play();
+          this.playButton = 'Stop';
         });
         reader.readAsDataURL(this.selectedFile);
       }
     },
-    playOutput() {
-      if (this.selectedFile) {
-        const reader = new FileReader();
-        reader.addEventListener('loadend', () => {
-          const audio = new Audio(reader.result);
-          audio.play();
-        });
-        reader.readAsDataURL(this.selectedFile);
-      }
+    audioFinish () {
+      console.log('You see this means audio finish.');
     },
   },
 };

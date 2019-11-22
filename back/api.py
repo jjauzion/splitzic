@@ -6,29 +6,32 @@ from werkzeug.utils import secure_filename
 from zipfile import ZipFile
 import split
 
-UPLOAD_FOLDER = 'raw_data'
-ALLOWED_EXTENSIONS = {'mp3'}
+#Configuration and Ping route
 
-app = Flask(__name__, static_folder="static", static_url_path="", template_folder="template")
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-CORS(app)
+UPLOAD_FOLDER = 'raw_data'
+OUTPUT_FOLDER = '../front/output/'
+ALLOWED_EXTENSIONS = {'mp3'}
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def split_audio(filename, stem):
-    output_dir = Path("output")
-    tmp_dir = Path("tmp")
-    split.split(str(Path(app.config['UPLOAD_FOLDER']) / filename), str(output_dir), int(stem))
-    return True
+app = Flask(__name__, static_folder="static", static_url_path="", template_folder="template")
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+CORS(app)
 
-# sanity check route
 @app.route('/ping', methods=['GET'])
 def ping_pong():
     print(request)
     return jsonify('pong!')
 
+#Get stems
+def split_audio(filename, stem):
+    output_dir = Path(OUTPUT_FOLDER + filename)
+    split.split(str(Path(app.config['UPLOAD_FOLDER']) / filename), str(output_dir), int(stem))
+    return True
+
+#Upload a file and convert it
 @app.route('/upload', methods=['POST'])
 def save_file():
     if request.method == 'POST':
