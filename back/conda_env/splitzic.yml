@@ -6,7 +6,7 @@ channels:
 
 dependencies:
   - python=3.7
-  - numpy=1.14.0
+  - numpy=1.14.6
   - tensorflow=1.14.0
   - ffmpeg
   - pandas==0.25.1
