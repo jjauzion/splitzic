@@ -46,15 +46,16 @@
     </v-layout>
     <v-container>
       <div v-if="selectedFile">
-        <v-btn @click="playSound">{{ playButton }}</v-btn>
-        <vuetify-audio :file="selectedFile" :ended="audioFinish"></vuetify-audio>
+        <v-btn @click="play">Play the original song</v-btn>
       </div>
+    </v-container>
+    <v-container id="waveform">
     </v-container>
   </v-container>
 </template>
 
 <script>
-import VuetifyAudio from 'vuetify-audio';
+import WaveSurfer from 'wavesurfer.js';
 import api from '@/service/api';
 
 export default {
@@ -64,8 +65,16 @@ export default {
       selectedFile: null,
       stemList: ['2', '4', '5'],
       stem: '2',
-      playButton: 'Play Original',
     };
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.wavesurfer = WaveSurfer.create({
+        container: '#waveform',
+        waveColor: 'orange',
+        progressColor: 'navy',
+      });
+    });
   },
   methods: {
     onFileChange(selectedFile) {
@@ -77,24 +86,18 @@ export default {
         api().post('/upload', fileFD).then((ret) => {
           console.log(ret);
         });
+        const reader = new FileReader();
+        reader.addEventListener('loadend', () => {
+          this.wavesurfer.load(reader.result);
+        });
+        reader.readAsDataURL(this.selectedFile);
       } else {
         this.selectedFile = null;
         this.objectUrl = null;
       }
     },
-    playSound() {
-      if (this.selectedFile) {
-        const reader = new FileReader();
-        reader.addEventListener('loadend', () => {
-          const audio = new Audio(reader.result);
-          audio.play();
-          this.playButton = 'Stop';
-        });
-        reader.readAsDataURL(this.selectedFile);
-      }
-    },
-    audioFinish () {
-      console.log('You see this means audio finish.');
+    play() {
+      this.wavesurfer.playPause();
     },
   },
 };

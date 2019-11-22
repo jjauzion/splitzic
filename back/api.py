@@ -45,9 +45,9 @@ def save_file():
             file_path = Path(app.config['UPLOAD_FOLDER']) / filename
             file.save(str(file_path))
             stem = int(request.form['stem'])
-            split_audio(filename, stem)
+            #split_audio(filename, stem)
         else:
-            return "Wrong file format. Only '.mp3' accepted"
+            return "Wrong file format. Only '.mp3' accepted."
     return "Upload successfull"
 
 if __name__ == '__main__':
