@@ -126,3 +126,4 @@ class Separator(object):
             self._tasks.append(task)
         if synchronous:
             self.join()
+        return destination

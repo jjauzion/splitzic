@@ -51,6 +51,11 @@
     </v-container>
     <v-container id="waveform">
     </v-container>
+    <v-divider></v-divider>
+    <v-container v-if="selectedFile">
+      <v-container id="waveform0"></v-container>
+      <v-container id="waveform1"></v-container>
+    </v-container>
   </v-container>
 </template>
 
@@ -65,6 +70,7 @@ export default {
       selectedFile: null,
       stemList: ['2', '4', '5'],
       stem: '2',
+      convertFiles: null,
     };
   },
   mounted() {
@@ -84,17 +90,34 @@ export default {
         fileFD.append('stem', this.stem);
         console.log(...fileFD);
         api().post('/upload', fileFD).then((ret) => {
-          console.log(ret);
+          console.log(ret.data);
+          this.convertFiles = ret.data;
+          this.loadOutput(ret.data);
         });
-        const reader = new FileReader();
-        reader.addEventListener('loadend', () => {
-          this.wavesurfer.load(reader.result);
-        });
-        reader.readAsDataURL(this.selectedFile);
+        this.loadAudioFile(selectedFile);
       } else {
         this.selectedFile = null;
-        this.objectUrl = null;
       }
+    },
+    loadOutput(files) {
+      const outputDir = 'http://localhost:8080/output/';
+      this.wavesurfer0 = WaveSurfer.create({
+        container: '#waveform0',
+        waveColor: 'orange',
+        progressColor: 'navy',
+      });
+      Object.values(files).forEach((file) => {
+        console.log(outputDir + file);
+        this.wavesurfer0.load(outputDir + file);
+        this.wavesurfer0.playPause();
+      });
+    },
+    loadAudioFile(file) {
+      const reader = new FileReader();
+      reader.addEventListener('loadend', () => {
+        this.wavesurfer.load(reader.result);
+      });
+      reader.readAsDataURL(file);
     },
     play() {
       this.wavesurfer.playPause();

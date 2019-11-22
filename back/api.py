@@ -27,9 +27,12 @@ def ping_pong():
 
 #Get stems
 def split_audio(filename, stem):
-    output_dir = Path(OUTPUT_FOLDER + filename)
-    split.split(str(Path(app.config['UPLOAD_FOLDER']) / filename), str(output_dir), int(stem))
-    return True
+    song_folder = filename
+    output_dir = Path(OUTPUT_FOLDER + song_folder)
+    #split.split(str(Path(app.config['UPLOAD_FOLDER']) / filename), str(output_dir), int(stem))
+    if stem == 2:
+        output_files = {"voice" : song_folder + '/vocals.wav', "accompaniment": song_folder + '/accompaniment.wav'}
+    return output_files
 
 #Upload a file and convert it
 @app.route('/upload', methods=['POST'])
@@ -45,7 +48,8 @@ def save_file():
             file_path = Path(app.config['UPLOAD_FOLDER']) / filename
             file.save(str(file_path))
             stem = int(request.form['stem'])
-            #split_audio(filename, stem)
+            ret = split_audio(filename, stem)
+            return jsonify(ret)
         else:
             return "Wrong file format. Only '.mp3' accepted."
     return "Upload successfull"

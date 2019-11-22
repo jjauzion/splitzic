@@ -15,4 +15,4 @@ def split(input_file, output_dir, stem):
         raise AttributeError("Wrong stem value.")
     print ('Splitting to "', output_dir,'" starts: ', datetime.now())
     separator = spleeter.Separator(f'spleeter:{stem}stems')
-    separator.separate_to_file(input_file, output_dir)
+    return separator.separate_to_file(input_file, output_dir)
